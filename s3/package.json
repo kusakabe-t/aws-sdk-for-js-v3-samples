@@ -3,10 +3,11 @@
     "start": "yarn tsc && node dist/main.js"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.391.0"
+    "@aws-sdk/client-s3": "3.395.0",
+    "dotenv": "16.3.1"
   },
   "devDependencies": {
-    "@types/node": "^20.5.0",
-    "typescript": "^5.1.6"
+    "@types/node": "18.17.6",
+    "typescript": "5.1.6"
   }
 }
