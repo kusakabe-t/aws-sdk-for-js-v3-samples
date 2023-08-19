@@ -11,7 +11,7 @@ main()
 async function main() {
   const bucket = process.env.BUCKET_NAME
   const key = process.env.OBJECT_KEY
-  const tmpFilePathName = './tmp/tmp.mp3'
+  const tmpFilePathName = './tmp/tmp_0.mp3'
 
   if (!bucket || !key) throw new Error('bucket or object key not set.')
 
@@ -37,7 +37,7 @@ async function main() {
 
   let index = 1
   while (!checkIsDownloadCompleted(restRangeAndLength)) {
-    const writeStream = createWriteStream(`./tmp/tmp${index}.mp3`)
+    const writeStream = createWriteStream(`./tmp/tmp_${index}.mp3`)
     index++
 
     const currentStartBytePoint = restRangeAndLength.end + 1
