@@ -1,16 +1,17 @@
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3"
-import {createWriteStream, write} from "fs"
+import { createWriteStream } from "fs"
 import * as dotenv from 'dotenv'
 dotenv.config()
 
-const downloadChunkSize = 1024 * 1024 / 8 // 1MB
+const downloadChunkSize = 1024 * 1024 * 20 // 20MB
 
 main()
 
+// S3のデータを20MBずつ分割しながらダウンロードし、ファイルも分割する
 async function main() {
   const bucket = process.env.BUCKET_NAME
   const key = process.env.OBJECT_KEY
-  const tmpFilePathName = 'tmp.mp3'
+  const tmpFilePathName = './tmp/tmp.mp3'
 
   if (!bucket || !key) throw new Error('bucket or object key not set.')
 
@@ -27,13 +28,18 @@ async function main() {
 
   // ファイル書き込み
   writeStream.write(await Body?.transformToByteArray())
+  writeStream.close()
 
   // 取得したデータ量と全体のデータ量を取得
   // while文の条件式を統一するために、rangeAndLengthにまとめる
   let restRangeAndLength = getRangeAndLength(ContentRange)
   console.log(`download ${0} - ${downloadChunkSize} bytes (total: ${restRangeAndLength.length}).`)
 
+  let index = 1
   while (!checkIsDownloadCompleted(restRangeAndLength)) {
+    const writeStream = createWriteStream(`./tmp/tmp${index}.mp3`)
+    index++
+
     const currentStartBytePoint = restRangeAndLength.end + 1
     const currentEndBytePoint = restRangeAndLength.end + downloadChunkSize
 
@@ -46,6 +52,7 @@ async function main() {
 
     // データ作成
     writeStream.write(await Body?.transformToByteArray())
+    writeStream.close()
 
     // S3のレスポンスから残りのデータ量を計算
     restRangeAndLength = getRangeAndLength(ContentRange)
