@@ -10,7 +10,7 @@ main()
 async function main() {
   const bucket = process.env.BUCKET_NAME
   const key = process.env.OBJECT_KEY
-  const tmpFilePathName = 'tmp%03.mp3'
+  const tmpFilePathName = 'tmp.mp3'
 
   if (!bucket || !key) throw new Error('bucket or object key not set.')
 
